@@ -1,3 +1,4 @@
+// Ruta: src/main/java/com/ecommerce/api/controller/ProductoController.java
 package com.ecommerce.api.controller;
 
 import com.ecommerce.api.model.Producto;
@@ -8,25 +9,25 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 @RestController
 @RequestMapping("/api/productos")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProductoController {
 
     @Autowired
     private ProductoRepository productoRepository;
 
-    // Endpoint público para que los clientes vean los productos 
     @GetMapping
     public List<Producto> listarProductos() {
         return productoRepository.findAll();
     }
     
-    // El resto de endpoints son para el Administrador 
-
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public Producto crearProducto(@RequestBody Producto producto) {
-       return productoRepository.save(producto);
+        return productoRepository.save(producto);
     }
     
     @PutMapping("/{id}")
@@ -54,15 +55,9 @@ public class ProductoController {
                 }).orElse(ResponseEntity.notFound().build());
     }
     
-    // Endpoint para que el admin vea el stock de cada producto 
     @GetMapping("/stock")
     @PreAuthorize("hasRole('ADMIN')")
     public List<Producto> verStock() {
         return productoRepository.findAll();
-    }
-
-    @GetMapping("/test")
-    public String testEndpoint() {
-        return "El endpoint de prueba funciona!";
     }
 }
